@@ -14,13 +14,45 @@ export default function Upload() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("/api/upload", { method: "POST", body: formData });
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Authorization": `${process.env.NEXT_PUBLIC_API_KEY}`,
+      }
+    });
     const data = await res.json();
     setUploadedFileName(data.fileName);
   };
 
+  const handleDownload = async (file: string) => {
+    const res = await fetch(`/api/download/${file}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `${process.env.NEXT_PUBLIC_API_KEY}`,
+      }
+    });
+    
+    if (res.ok) {
+      // Procesar la respuesta, por ejemplo, descargando el archivo
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = file; // Aquí asignas el nombre del archivo que se descargará
+      link.click();
+    } else {
+      // Manejar el error si la petición falla
+      console.error("Error en la descarga:", res.status);
+    }
+  };
+
   const fetchFiles = async () => {
-    const res = await fetch("/api/files");
+    const res = await fetch("/api/files", {
+      method: "GET",
+      headers: {
+        "Authorization": `${process.env.NEXT_PUBLIC_API_KEY}`,
+      }
+    });
     const data = await res.json();
     setFiles(data.files || []);
   };
@@ -55,7 +87,7 @@ export default function Upload() {
         <ul>
           {files.map((file, index) => (
             <li key={index}>
-              <a href={`/api/download/${file}`} download>{file}</a>
+              <div onClick={() => handleDownload(file)}>{file}</div>
             </li>
           ))}
         </ul>
