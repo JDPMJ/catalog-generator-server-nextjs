@@ -4,7 +4,7 @@ import { readFile } from "fs/promises";
 
 export async function GET(req: NextRequest, { params }: { params: { file: string } }) {
   try {
-    const filePath = path.join(process.cwd(), "public/uploads", params.file);
+    const filePath = path.join(process.cwd(), "uploads", params.file);
     const fileBuffer = await readFile(filePath);
 
     return new NextResponse(fileBuffer, {

@@ -4,7 +4,7 @@ import path from "path";
 
 export async function GET() {
   try {
-    const uploadDir = path.join(process.cwd(), "public/uploads");
+    const uploadDir = path.join(process.cwd(), "uploads");
     const files = await readdir(uploadDir);
 
     return NextResponse.json({ files });
